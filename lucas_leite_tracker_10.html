@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucas Leite Competition Results</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold:#FFD700;--silver:#C0C0C0;--bronze:#CD7F32;
+    --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;
+    --red:#e63946;--text:#f0f0f5;--muted:#7070a0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;}
+  header{background:linear-gradient(135deg,var(--red) 0%,#8b0000 100%);padding:22px 32px;display:flex;align-items:center;gap:18px;box-shadow:0 4px 30px rgba(230,57,70,0.4);position:relative;overflow:hidden;}
+  header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(0,0,0,0.05) 20px,rgba(0,0,0,0.05) 40px);}
+  .logo{width:52px;height:52px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--red);flex-shrink:0;z-index:1;}
+  .htext{z-index:1;}
+  header h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;line-height:1;}
+  header p{font-size:0.8rem;opacity:0.85;font-family:'Barlow Condensed',sans-serif;letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+
+  #loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;}
+  .spinner{width:48px;height:48px;border:3px solid var(--surface2);border-top-color:var(--red);border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  #loading p{font-family:'Barlow Condensed',sans-serif;letter-spacing:2px;color:var(--muted);font-size:0.9rem;}
+
+  #error{display:none;padding:40px 32px;text-align:center;}
+  .err-box{background:rgba(230,57,70,0.1);border:1px solid var(--red);border-radius:8px;padding:24px;max-width:500px;margin:0 auto;}
+  #error h3{color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:1.4rem;margin-bottom:8px;}
+  #error p{color:var(--muted);font-size:0.9rem;}
+
+  #app{display:none;padding:32px;}
+
+  .stats-bar{display:flex;gap:14px;margin-bottom:28px;flex-wrap:wrap;}
+  .stat-card{background:var(--surface);border-radius:8px;padding:14px 22px;flex:1;min-width:100px;border-bottom:3px solid transparent;transition:all 0.2s;cursor:pointer;}
+  .stat-card:hover{transform:translateY(-2px);opacity:0.85;}
+  .stat-card.active-card{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.4);}
+  .s-total{border-color:var(--red);}.s-gold{border-color:var(--gold);}.s-silver{border-color:var(--silver);}.s-bronze{border-color:var(--bronze);}
+  .s-comps{border-color:#6060c0;}.s-athletes{border-color:#6060c0;}
+  .stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;line-height:1;}
+  .s-total .stat-num{color:var(--red);}.s-gold .stat-num{color:var(--gold);}.s-silver .stat-num{color:var(--silver);}.s-bronze .stat-num{color:var(--bronze);}
+  .s-comps .stat-num{color:#8080e0;}.s-athletes .stat-num{color:#8080e0;}
+  .stat-label{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+
+  .view-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:var(--muted);margin-bottom:20px;}
+
+
+
+  .comp-section{margin-bottom:34px;}
+  .comp-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--surface2);}
+  .comp-title{font-family:'Bebas Neue',sans-serif;font-size:1.45rem;letter-spacing:2px;}
+  .comp-date{font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;letter-spacing:1px;color:var(--muted);text-transform:uppercase;background:var(--surface);padding:3px 10px;border-radius:100px;}
+  .comp-count{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;color:var(--muted);letter-spacing:1px;}
+
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px;}
+  .athlete-card{background:var(--surface);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;border:1px solid var(--surface2);transition:all 0.2s;animation:fadeUp 0.35s ease both;}
+  .athlete-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.35);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .medal-badge{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+  .medal-badge.gold{background:radial-gradient(circle at 35% 35%,#ffe566,#b8860b);box-shadow:0 0 12px rgba(255,215,0,0.4);}
+  .medal-badge.silver{background:radial-gradient(circle at 35% 35%,#e8e8e8,#8a8a8a);box-shadow:0 0 12px rgba(192,192,192,0.3);}
+  .medal-badge.bronze{background:radial-gradient(circle at 35% 35%,#e8a060,#7a4010);box-shadow:0 0 12px rgba(205,127,50,0.3);}
+  .athlete-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.95rem;}
+  .medal-text{font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+  .medal-text.gold{color:var(--gold);}.medal-text.silver{color:var(--silver);}.medal-text.bronze{color:var(--bronze);}
+
+  .no-results{text-align:center;padding:50px 20px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+  .no-results span{font-size:2rem;display:block;margin-bottom:10px;}
+  .comp-summary{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;margin-bottom:8px;}
+  .csm{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;padding:4px 12px;border-radius:100px;letter-spacing:1px;}
+  .csm.gold{background:rgba(255,215,0,0.15);color:var(--gold);}
+  .csm.silver{background:rgba(192,192,192,0.15);color:var(--silver);}
+  .csm.bronze{background:rgba(205,127,50,0.15);color:var(--bronze);}
+
+  #athlete-view{display:none;}
+  .ath-card{background:var(--surface);border-radius:10px;padding:14px 16px;border:1px solid var(--surface2);transition:all 0.2s;animation:fadeUp 0.3s ease both;}
+  .ath-card:hover{transform:translateY(-2px);border-color:var(--red);}
+  .ath-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px;}
+  .ath-total{font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:8px;}
+  .ath-breakdown{font-size:0.8rem;color:var(--muted);font-weight:400;}
+  .pill{padding:2px 10px;border-radius:100px;font-size:0.68rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
+  .pill.gold{background:rgba(255,215,0,0.15);color:var(--gold);}
+  .pill.silver{background:rgba(192,192,192,0.15);color:var(--silver);}
+  .pill.bronze{background:rgba(205,127,50,0.15);color:var(--bronze);}
+  .medal-pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+  .ath-comps{margin-top:8px;display:flex;flex-wrap:wrap;gap:7px;}
+  .comp-chip{display:inline-flex;flex-direction:column;align-items:flex-start;background:var(--surface2);border:1px solid #2a2a3a;border-radius:8px;padding:7px 12px;cursor:pointer;transition:all 0.2s;font-family:'Barlow Condensed',sans-serif;text-align:left;}
+  .comp-chip:hover{border-color:var(--muted);background:#22223a;}
+  .chip-name{font-size:0.75rem;color:var(--muted);letter-spacing:0.5px;line-height:1.3;}
+  .chip-medal{font-size:0.82rem;font-weight:700;letter-spacing:0.5px;margin-top:4px;line-height:1.3;}
+  .comp-chip-gold{border-color:rgba(255,215,0,0.3);background:rgba(255,215,0,0.08);}
+  .comp-chip-gold .chip-medal{color:var(--gold);}
+  .comp-chip-silver{border-color:rgba(192,192,192,0.3);background:rgba(192,192,192,0.08);}
+  .comp-chip-silver .chip-medal{color:var(--silver);}
+  .comp-chip-bronze{border-color:rgba(205,127,50,0.3);background:rgba(205,127,50,0.08);}
+  .comp-chip-bronze .chip-medal{color:var(--bronze);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">LL</div>
+  <div class="htext">
+    <h1>Lucas Leite Competition Results</h1>
+    <p>Jiu Jitsu &middot; Medal Tracker &middot; 2026 Season</p>
+  </div>
+</header>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Loading results...</p>
+</div>
+
+<div id="error">
+  <div class="err-box">
+    <h3>Could Not Load Data</h3>
+    <p id="error-msg">Unable to connect. Please try again later.</p>
+  </div>
+</div>
+
+<div id="app">
+  <div class="stats-bar">
+    <div class="stat-card s-total active-card" onclick="setMainView('all')"><div class="stat-num" id="s-total">0</div><div class="stat-label">Total Medals</div></div>
+    <div class="stat-card s-athletes" onclick="setMainView('athletes')"><div class="stat-num" id="s-athletes">0</div><div class="stat-label">Athletes</div></div>
+    <div class="stat-card s-gold" onclick="setMainView('gold')"><div class="stat-num" id="s-gold">0</div><div class="stat-label">🥇 Gold</div></div>
+    <div class="stat-card s-silver" onclick="setMainView('silver')"><div class="stat-num" id="s-silver">0</div><div class="stat-label">🥈 Silver</div></div>
+    <div class="stat-card s-bronze" onclick="setMainView('bronze')"><div class="stat-num" id="s-bronze">0</div><div class="stat-label">🥉 Bronze</div></div>
+  </div>
+
+  <div class="view-label" id="view-label">ALL MEDALS</div>
+
+  <div id="comp-view"><div id="comp-sections"></div></div>
+  <div id="athlete-view"><div id="athlete-grid" class="cards-grid"></div></div>
+</div>
+
+<script>
+var SUPABASE_URL = 'https://rtvwfefrpdwqvsddooib.supabase.co';
+var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0dndmZWZycGR3cXZzZGRvb2liIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0MDkwNjksImV4cCI6MjA5OTk4NTA2OX0.WsYWup_QUbgggcKikkKge2XgRyxXBiM0bHF1Bm4Ztj0';
+
+var DATA = [];
+
+function medal(cls){return{gold:'🥇',silver:'🥈',bronze:'🥉'}[cls]||'🎖';}
+function mlabel(cls){return{gold:'1st Place',silver:'2nd Place',bronze:'3rd Place'}[cls]||'Placed';}
+function fmtDate(d){return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+
+async function loadData(){
+  var url = SUPABASE_URL+'/rest/v1/results?select=*&order=date.asc';
+  console.log('Fetching:', url);
+  var res = await fetch(url, {
+    method: 'GET',
+    headers:{
+      'apikey': ANON_KEY,
+      'Authorization': 'Bearer '+ANON_KEY,
+      'Content-Type': 'application/json'
+    }
+  });
+  console.log('Response status:', res.status, res.statusText);
+  if(!res.ok){
+    var errText = await res.text();
+    console.error('Error body:', errText);
+    throw new Error('HTTP '+res.status+': '+errText.substring(0,200));
+  }
+  var rows = await res.json();
+  console.log('Rows received:', rows.length);
+  return rows.map(function(r){
+    return {
+      competition: r.competition,
+      date: r.date,
+      athleteName: r.athlete_name,
+      medalClass: r.medal_class,
+      medal: r.medal
+    };
+  });
+}
+
+function renderStats(){
+  document.getElementById('s-total').textContent=DATA.length;
+  document.getElementById('s-gold').textContent=DATA.filter(function(d){return d.medalClass==='gold';}).length;
+  document.getElementById('s-silver').textContent=DATA.filter(function(d){return d.medalClass==='silver';}).length;
+  document.getElementById('s-bronze').textContent=DATA.filter(function(d){return d.medalClass==='bronze';}).length;
+  document.getElementById('s-athletes').textContent=new Set(DATA.map(function(d){return d.athleteName.toLowerCase();})).size;
+}
+
+function renderComps(medalFilter, compsOnly){
+  var filtered=DATA.filter(function(d){
+    return medalFilter==='all'||d.medalClass===medalFilter;
+  });
+  var byComp={};
+  filtered.forEach(function(d){
+    if(!byComp[d.competition])byComp[d.competition]={date:d.date,entries:[]};
+    byComp[d.competition].entries.push(d);
+  });
+  // Also include comps with no entries in filtered set when showing all comps
+  if(compsOnly){
+    DATA.forEach(function(d){
+      if(!byComp[d.competition])byComp[d.competition]={date:d.date,entries:[]};
+    });
+  }
+  var sorted=Object.entries(byComp).sort(function(a,b){return new Date(b[1].date)-new Date(a[1].date);});
+  var container=document.getElementById('comp-sections');
+  container.innerHTML='';
+  if(!sorted.length){container.innerHTML='<div class="no-results"><span>🔍</span>No results found</div>';return;}
+  sorted.forEach(function(entry){
+    var name=entry[0];var info=entry[1];
+    var sec=document.createElement('div');sec.className='comp-section';
+    if(compsOnly){
+      // Just show competition name and date, no athlete cards
+      var totalMedals=DATA.filter(function(d){return d.competition===name;}).length;
+      var goldC=DATA.filter(function(d){return d.competition===name&&d.medalClass==='gold';}).length;
+      var silvC=DATA.filter(function(d){return d.competition===name&&d.medalClass==='silver';}).length;
+      var bronC=DATA.filter(function(d){return d.competition===name&&d.medalClass==='bronze';}).length;
+      sec.innerHTML='<div class="comp-header"><div class="comp-title">'+name+'</div><div class="comp-date">'+fmtDate(info.date)+'</div><div class="comp-count">'+totalMedals+' medals</div></div>'
+        +'<div class="comp-summary">'
+        +(goldC?'<span class="csm gold">🥇 '+goldC+' Gold</span>':'')
+        +(silvC?'<span class="csm silver">🥈 '+silvC+' Silver</span>':'')
+        +(bronC?'<span class="csm bronze">🥉 '+bronC+' Bronze</span>':'')
+        +'</div>';
+    } else {
+      sec.innerHTML='<div class="comp-header"><div class="comp-title">'+name+'</div><div class="comp-date">'+fmtDate(info.date)+'</div><div class="comp-count">'+info.entries.length+' medal'+(info.entries.length!==1?'s':'')+'</div></div><div class="cards-grid"></div>';
+      container.appendChild(sec);
+      var grid=sec.querySelector('.cards-grid');
+      info.entries.sort(function(a,b){return a.athleteName.localeCompare(b.athleteName);});
+      info.entries.forEach(function(e,i){
+        var c=document.createElement('div');c.className='athlete-card';c.style.animationDelay=(i*40)+'ms';
+        c.innerHTML='<div class="medal-badge '+e.medalClass+'">'+medal(e.medalClass)+'</div><div><div class="athlete-name">'+e.athleteName+'</div><div class="medal-text '+e.medalClass+'">'+mlabel(e.medalClass)+'</div></div>';
+        grid.appendChild(c);
+      });
+      return;
+    }
+    container.appendChild(sec);
+  });
+}
+function renderComp(){ renderComps('all',false); }
+
+function renderAthletes(){
+  var by={};
+  DATA.forEach(function(d){
+    var k=d.athleteName.toLowerCase();
+    if(!by[k])by[k]={name:d.athleteName,entries:[]};
+    by[k].entries.push(d);
+  });
+  var sorted=Object.values(by).sort(function(a,b){
+    return a.name.localeCompare(b.name);
+  });
+  var grid=document.getElementById('athlete-grid');grid.innerHTML='';
+  sorted.forEach(function(ath,i){
+    var c=document.createElement('div');c.className='ath-card';c.style.animationDelay=(i*30)+'ms';
+    var gCount=ath.entries.filter(function(e){return e.medalClass==='gold';}).length;
+    var sCount=ath.entries.filter(function(e){return e.medalClass==='silver';}).length;
+    var bCount=ath.entries.filter(function(e){return e.medalClass==='bronze';}).length;
+    var total=ath.entries.length;
+    var compsSorted=[...ath.entries].sort(function(a,b){return new Date(a.date)-new Date(b.date);});
+    var pills='';
+    ath.entries.filter(function(e){return e.medalClass==='gold';}).forEach(function(){pills+='<span class="pill gold">🥇 Gold</span>';});
+    ath.entries.filter(function(e){return e.medalClass==='silver';}).forEach(function(){pills+='<span class="pill silver">🥈 Silver</span>';});
+    ath.entries.filter(function(e){return e.medalClass==='bronze';}).forEach(function(){pills+='<span class="pill bronze">🥉 Bronze</span>';});
+    var html='<div class="ath-name">'+ath.name+'</div>';
+    html+='<div class="ath-total">'+total+' medal'+(total!==1?'s':'')+' <span class="ath-breakdown">';
+    if(gCount) html+='🥇 '+gCount+' ';
+    if(sCount) html+='🥈 '+sCount+' ';
+    if(bCount) html+='🥉 '+bCount;
+    html+='</span></div>';
+    html+='<div class="medal-pills">'+pills+'</div>';
+    html+='<div class="ath-comps">';
+    compsSorted.forEach(function(e){
+      var emoji={gold:'🥇',silver:'🥈',bronze:'🥉'}[e.medalClass];
+      html+='<div class="comp-chip comp-chip-'+e.medalClass+'">'
+        +'<span class="chip-name">'+e.competition+'</span>'
+        +'<span class="chip-medal">'+emoji+' '+e.medal+'</span>'
+        +'</div>';
+    });
+    html+='</div>';
+    c.innerHTML=html;
+    grid.appendChild(c);
+  });
+}
+
+function setMainView(mode){
+  // Update active card
+  document.querySelectorAll('.stat-card').forEach(function(c){c.classList.remove('active-card');});
+  var cardMap={all:'s-total',gold:'s-gold',silver:'s-silver',bronze:'s-bronze',comps:'s-comps',athletes:'s-athletes'};
+  var activeCard=document.querySelector('.'+cardMap[mode]);
+  if(activeCard) activeCard.classList.add('active-card');
+
+  // Update label
+  var labels={all:'ALL MEDALS',gold:'GOLD MEDALS',silver:'SILVER MEDALS',bronze:'BRONZE MEDALS',comps:'COMPETITIONS',athletes:'ATHLETES'};
+  document.getElementById('view-label').textContent=labels[mode]||'';
+
+  if(mode==='athletes'){
+    document.getElementById('comp-view').style.display='none';
+    document.getElementById('athlete-view').style.display='block';
+    renderAthletes();
+  } else if(mode==='comps'){
+    document.getElementById('comp-view').style.display='block';
+    document.getElementById('athlete-view').style.display='none';
+    renderComps('all', true);
+  } else {
+    document.getElementById('comp-view').style.display='block';
+    document.getElementById('athlete-view').style.display='none';
+    renderComps(mode, false);
+  }
+}
+
+(async function(){
+  try{
+    DATA = await loadData();
+    document.getElementById('loading').style.display='none';
+    document.getElementById('athlete-view').style.display='none';
+    if(!DATA.length){
+      document.getElementById('error-msg').textContent='No results found in the database.';
+      document.getElementById('error').style.display='';
+      return;
+    }
+    document.getElementById('app').style.display='block';
+    renderStats();
+    setMainView('all');
+  }catch(err){
+    console.error('LOAD ERROR:', err);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('error-msg').textContent='Could not connect to database: '+err.message;
+    document.getElementById('error').style.display='block';
+  }
+})();
+</script>
+</body>
+</html>
