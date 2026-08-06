@@ -145,16 +145,12 @@ function renderAthletes(){
     var bCount=ath.entries.filter(function(e){return e.medalClass==='bronze';}).length;
     var total=ath.entries.length;
     var compsSorted=[...ath.entries].sort(function(a,b){return new Date(a.date)-new Date(b.date);});
-    var pills='';
-    compsSorted.filter(function(e){return e.medalClass==='gold';}).forEach(function(){pills+='<span class="pill gold">🥇 Gold</span>';});
-    compsSorted.filter(function(e){return e.medalClass==='silver';}).forEach(function(){pills+='<span class="pill silver">🥈 Silver</span>';});
-    compsSorted.filter(function(e){return e.medalClass==='bronze';}).forEach(function(){pills+='<span class="pill bronze">🥉 Bronze</span>';});
     var html='<div class="ath-name">'+ath.name+'</div>';
     html+='<div class="ath-total">'+total+' medal'+(total!==1?'s':'')+' <span class="ath-breakdown">';
     if(gCount)html+='🥇 '+gCount+' ';
     if(sCount)html+='🥈 '+sCount+' ';
     if(bCount)html+='🥉 '+bCount;
-    html+='</span></div><div class="medal-pills">'+pills+'</div><div class="ath-comps">';
+    html+='</span></div><div class="ath-comps">';
     compsSorted.forEach(function(e){
       html+='<div class="comp-chip comp-chip-'+e.medalClass+'"><span class="chip-name">'+e.competition+'</span><span class="chip-medal">'+medal(e.medalClass)+' '+e.medal+'</span></div>';
     });
