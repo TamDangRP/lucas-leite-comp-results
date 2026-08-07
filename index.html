@@ -137,8 +137,9 @@ function renderComps(medalFilter){
     var grid=sec.querySelector('.cards-grid');
     info.entries.sort(function(a,b){return a.athleteName.localeCompare(b.athleteName);});
     info.entries.forEach(function(e,i){
-      var c=document.createElement('div');c.className='athlete-card';c.style.animationDelay=(i*40)+'ms';
+      var c=document.createElement('div');c.className='athlete-card';c.style.animationDelay=(i*40)+'ms';c.style.cursor='pointer';
       c.innerHTML='<div class="medal-badge '+e.medalClass+'">'+medal(e.medalClass)+'</div><div><div class="athlete-name">'+e.athleteName+'</div><div class="medal-text '+e.medalClass+'">'+mlabel(e.medalClass)+'</div></div>';
+      (function(name){c.onclick=function(){showAthleteProfile(name);};})(e.athleteName);
       grid.appendChild(c);
     });
   });
@@ -195,16 +196,26 @@ function showAthleteProfile(name){
     +'<div class="profile-total">'+total+' medal'+(total!==1?'s':'')+' &mdash; '+summary.trim()+'</div>'
     +'<div class="profile-chips">'+chips+'</div>';
   document.getElementById('athlete-view').style.display='none';
+  document.getElementById('comp-view').style.display='none';
   document.getElementById('athlete-profile').style.display='block';
 }
 
+var lastView='all';
+
 function showAthleteList(){
   document.getElementById('athlete-profile').style.display='none';
-  document.getElementById('athlete-view').style.display='block';
-  document.getElementById('view-label').textContent='ATHLETES';
+  if(lastView==='athletes'){
+    document.getElementById('athlete-view').style.display='block';
+    document.getElementById('view-label').textContent='ATHLETES';
+  } else {
+    document.getElementById('comp-view').style.display='block';
+    var labels={all:'ALL MEDALS',gold:'GOLD MEDALS',silver:'SILVER MEDALS',bronze:'BRONZE MEDALS'};
+    document.getElementById('view-label').textContent=labels[lastView]||'ALL MEDALS';
+  }
 }
 
 function setMainView(mode){
+  lastView=mode;
   document.querySelectorAll('.stat-card').forEach(function(c){c.classList.remove('active-card');});
   var map={all:'s-total',athletes:'s-athletes',gold:'s-gold',silver:'s-silver',bronze:'s-bronze'};
   var el=document.querySelector('.'+map[mode]);
