@@ -46,6 +46,17 @@
   .no-results{text-align:center;padding:50px 20px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;}
   .no-results span{font-size:2rem;display:block;margin-bottom:10px;}
   #athlete-view{display:none;}
+  .ath-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+  .ath-list-item{background:var(--surface);border-radius:10px;padding:14px 16px;border:1px solid var(--surface2);cursor:pointer;transition:all 0.2s;animation:fadeUp 0.3s ease both;}
+  .ath-list-item:hover{transform:translateY(-2px);border-color:var(--red);}
+  .ath-list-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;margin-bottom:4px;}
+  .ath-list-count{font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;color:var(--muted);}
+  #athlete-profile{display:none;padding:0;}
+  .back-btn{background:var(--surface);border:1px solid var(--surface2);color:var(--muted);padding:8px 18px;border-radius:100px;font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;letter-spacing:1px;cursor:pointer;transition:all 0.2s;margin-bottom:24px;display:inline-flex;align-items:center;gap:8px;}
+  .back-btn:hover{border-color:var(--red);color:var(--text);}
+  .profile-name{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:2px;margin-bottom:4px;}
+  .profile-total{font-family:'Barlow Condensed',sans-serif;font-size:1rem;color:var(--muted);margin-bottom:24px;}
+  .profile-chips{display:flex;flex-wrap:wrap;gap:10px;}
   .ath-card{background:var(--surface);border-radius:10px;padding:14px 16px;border:1px solid var(--surface2);transition:all 0.2s;animation:fadeUp 0.3s ease both;}
   .ath-card:hover{transform:translateY(-2px);border-color:var(--red);}
   .ath-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px;}
@@ -86,7 +97,11 @@
   </div>
   <div class="view-label" id="view-label">ALL MEDALS</div>
   <div id="comp-view"><div id="comp-sections"></div></div>
-  <div id="athlete-view"><div id="athlete-grid" class="cards-grid"></div></div>
+  <div id="athlete-view"><div id="athlete-list" class="ath-list"></div></div>
+  <div id="athlete-profile">
+    <button class="back-btn" onclick="showAthleteList()">&#8592; All Athletes</button>
+    <div id="profile-content"></div>
+  </div>
 </div>
 <script>
 var DATA = [{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"Camden Lee","medalClass":"silver","medal":"Silver"},{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"Chase Woo","medalClass":"bronze","medal":"Bronze"},{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"Evan Lee","medalClass":"gold","medal":"Gold"},{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"JJ Kim","medalClass":"bronze","medal":"Bronze"},{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"Joy Kim","medalClass":"silver","medal":"Silver"},{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"Landon Yi","medalClass":"bronze","medal":"Bronze"},{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"Phoenix Naquila","medalClass":"silver","medal":"Silver"},{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"Selena Navarro","medalClass":"silver","medal":"Silver"},{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"Sergio Alaniz","medalClass":"silver","medal":"Silver"},{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"Skye Ferris","medalClass":"gold","medal":"Gold"},{"competition":"DREAM White Belt","date":"2026-01-11","athleteName":"Sofia Subia","medalClass":"gold","medal":"Gold"},{"competition":"\"D\" REAM","date":"2026-01-30","athleteName":"Cameron Yee","medalClass":"gold","medal":"Gold"},{"competition":"\"D\" REAM","date":"2026-01-30","athleteName":"Camila Mendez","medalClass":"gold","medal":"Gold"},{"competition":"\"D\" REAM","date":"2026-01-30","athleteName":"Harper Dang","medalClass":"bronze","medal":"Bronze"},{"competition":"\"D\" REAM","date":"2026-01-30","athleteName":"Jackson Gou","medalClass":"gold","medal":"Gold"},{"competition":"\"D\" REAM","date":"2026-01-30","athleteName":"Jordan Kim","medalClass":"bronze","medal":"Bronze"},{"competition":"\"D\" REAM","date":"2026-01-30","athleteName":"Liv Sarno","medalClass":"gold","medal":"Gold"},{"competition":"\"D\" REAM","date":"2026-01-30","athleteName":"Logan Dang","medalClass":"gold","medal":"Gold"},{"competition":"\"D\" REAM","date":"2026-01-30","athleteName":"Skye Ferris","medalClass":"silver","medal":"Silver"},{"competition":"\"D\" REAM","date":"2026-01-30","athleteName":"Sofia Subia","medalClass":"gold","medal":"Gold"},{"competition":"\"D\" REAM","date":"2026-01-30","athleteName":"Tyson Yee","medalClass":"bronze","medal":"Bronze"},{"competition":"IBJJF- LA Open","date":"2026-02-02","athleteName":"Camila Mendez","medalClass":"bronze","medal":"Bronze"},{"competition":"JJWL - California XI","date":"2026-02-21","athleteName":"Camila Mendez","medalClass":"gold","medal":"Gold"},{"competition":"IBJJF- OC Winter","date":"2026-03-01","athleteName":"Camila Mendez","medalClass":"silver","medal":"Silver"},{"competition":"D \"R\" EAM","date":"2026-03-14","athleteName":"Chase Woo","medalClass":"silver","medal":"Silver"},{"competition":"D \"R\" EAM","date":"2026-03-14","athleteName":"Harper Dang","medalClass":"gold","medal":"Gold"},{"competition":"D \"R\" EAM","date":"2026-03-14","athleteName":"JJ Kim","medalClass":"bronze","medal":"Bronze"},{"competition":"D \"R\" EAM","date":"2026-03-14","athleteName":"Liv Sarno","medalClass":"gold","medal":"Gold"},{"competition":"D \"R\" EAM","date":"2026-03-14","athleteName":"Logan Dang","medalClass":"gold","medal":"Gold"},{"competition":"D \"R\" EAM","date":"2026-03-14","athleteName":"Skye Ferris","medalClass":"silver","medal":"Silver"},{"competition":"D \"R\" EAM","date":"2026-03-14","athleteName":"Sofia Subia","medalClass":"bronze","medal":"Bronze"},{"competition":"D \"R\" EAM","date":"2026-03-14","athleteName":"Tyson Yee","medalClass":"gold","medal":"Gold"},{"competition":"D \"R\" EAM NOGI","date":"2026-03-15","athleteName":"Liv Sarno","medalClass":"gold","medal":"Gold"},{"competition":"Golden Fed Winter","date":"2026-03-21","athleteName":"Joy Kim","medalClass":"gold","medal":"Gold"},{"competition":"DR \"E\" AM","date":"2026-04-25","athleteName":"Cameron Yee","medalClass":"gold","medal":"Gold"},{"competition":"DR \"E\" AM","date":"2026-04-25","athleteName":"Camila Mendez","medalClass":"silver","medal":"Silver"},{"competition":"DR \"E\" AM","date":"2026-04-25","athleteName":"Harper Dang","medalClass":"silver","medal":"Silver"},{"competition":"DR \"E\" AM","date":"2026-04-25","athleteName":"Jackson Gou","medalClass":"gold","medal":"Gold"},{"competition":"DR \"E\" AM","date":"2026-04-25","athleteName":"Landon Yi","medalClass":"gold","medal":"Gold"},{"competition":"DR \"E\" AM","date":"2026-04-25","athleteName":"Liv Sarno","medalClass":"gold","medal":"Gold"},{"competition":"DR \"E\" AM","date":"2026-04-25","athleteName":"Logan Dang","medalClass":"gold","medal":"Gold"},{"competition":"DR \"E\" AM","date":"2026-04-25","athleteName":"Tyson Yee","medalClass":"silver","medal":"Silver"},{"competition":"DRE \"A\" M","date":"2026-06-20","athleteName":"Harper Dang","medalClass":"silver","medal":"Silver"},{"competition":"DRE \"A\" M","date":"2026-06-20","athleteName":"Jackson Gou","medalClass":"silver","medal":"Silver"},{"competition":"DRE \"A\" M","date":"2026-06-20","athleteName":"Liv Sarno","medalClass":"gold","medal":"Gold"},{"competition":"DRE \"A\" M","date":"2026-06-20","athleteName":"Logan Dang","medalClass":"gold","medal":"Gold"},{"competition":"DRE \"A\" M","date":"2026-06-20","athleteName":"Macedonio Ochoa III","medalClass":"bronze","medal":"Bronze"},{"competition":"DRE \"A\" M","date":"2026-06-20","athleteName":"Phoenix Naquila","medalClass":"silver","medal":"Silver"},{"competition":"DRE \"A\" M","date":"2026-06-20","athleteName":"Skye Ferris","medalClass":"gold","medal":"Gold"},{"competition":"DRE \"A\" M","date":"2026-06-20","athleteName":"Spyder Vellanoweth","medalClass":"bronze","medal":"Bronze"},{"competition":"DRE \"A\" M","date":"2026-06-20","athleteName":"Szavina Vellanoweth","medalClass":"silver","medal":"Silver"},{"competition":"DRE \"A\" M","date":"2026-06-20","athleteName":"Tyson Yee","medalClass":"gold","medal":"Gold"},{"competition":"IBJJF - Los Angeles Summer Kids International Open 2026","date":"2026-07-12","athleteName":"Camila Mendez","medalClass":"gold","medal":"Gold"},{"competition":"IBJJF - Honolulu International","date":"2026-07-18","athleteName":"Liv Sarno","medalClass":"gold","medal":"Gold"},{"competition":"Golden Summer Open 2026","date":"2026-07-18","athleteName":"Avery Hyun","medalClass":"bronze","medal":"Bronze"},{"competition":"Golden Summer Open 2026","date":"2026-07-18","athleteName":"Credo Kleeh","medalClass":"silver","medal":"Silver"},{"competition":"Golden Summer Open 2026","date":"2026-07-18","athleteName":"Eli Vasquez","medalClass":"gold","medal":"Gold"},{"competition":"Golden Summer Open 2026","date":"2026-07-18","athleteName":"JJ Kim","medalClass":"gold","medal":"Gold"},{"competition":"Golden Summer Open 2026","date":"2026-07-18","athleteName":"Jordan Kim","medalClass":"gold","medal":"Gold"},{"competition":"Golden Summer Open 2026","date":"2026-07-18","athleteName":"Olivia Vasquez","medalClass":"silver","medal":"Silver"},{"competition":"Golden Summer Open 2026","date":"2026-07-18","athleteName":"Violet Liu","medalClass":"gold","medal":"Gold"},{"competition":"DREA \"M\"","date":"2026-08-01","athleteName":"Camila Mendez","medalClass":"gold","medal":"Gold"},{"competition":"DREA \"M\"","date":"2026-08-01","athleteName":"Harper Dang","medalClass":"silver","medal":"Silver"},{"competition":"DREA \"M\"","date":"2026-08-01","athleteName":"Jackson Gou","medalClass":"silver","medal":"Silver"},{"competition":"DREA \"M\"","date":"2026-08-01","athleteName":"JJ Kim","medalClass":"bronze","medal":"Bronze"},{"competition":"DREA \"M\"","date":"2026-08-01","athleteName":"Logan Dang","medalClass":"gold","medal":"Gold"},{"competition":"DREA \"M\"","date":"2026-08-01","athleteName":"Macedonio Ochoa III","medalClass":"silver","medal":"Silver"},{"competition":"DREA \"M\"","date":"2026-08-01","athleteName":"Olivia Vasquez","medalClass":"silver","medal":"Silver"},{"competition":"DREA \"M\"","date":"2026-08-01","athleteName":"Rhyder Visuddhidham","medalClass":"gold","medal":"Gold"},{"competition":"DREA \"M\"","date":"2026-08-01","athleteName":"Skye Ferris","medalClass":"silver","medal":"Silver"},{"competition":"JJWL - California XII (Gi)","date":"2026-08-02","athleteName":"Camila Mendez","medalClass":"gold","medal":"Gold"},{"competition":"JJWL - California XII (Gi)","date":"2026-08-02","athleteName":"Eli Vasquez","medalClass":"bronze","medal":"Bronze"},{"competition":"JJWL - California XII (Gi)","date":"2026-08-02","athleteName":"Eligh Flores","medalClass":"silver","medal":"Silver"},{"competition":"JJWL - California XII (Gi)","date":"2026-08-02","athleteName":"Logan Dang","medalClass":"gold","medal":"Gold"},{"competition":"JJWL - California XII (Gi)","date":"2026-08-02","athleteName":"Max De La Torre","medalClass":"silver","medal":"Silver"},{"competition":"JJWL - California XII (Gi)","date":"2026-08-02","athleteName":"Olivia Vasquez","medalClass":"gold","medal":"Gold"},{"competition":"JJWL - California XII (No-Gi)","date":"2026-08-02","athleteName":"Eli Vasquez","medalClass":"bronze","medal":"Bronze"}];
@@ -129,35 +144,64 @@ function renderComps(medalFilter){
   });
 }
 
-function renderAthletes(){
+function buildAthleteMap(){
   var by={};
   DATA.forEach(function(d){
     var k=d.athleteName.toLowerCase();
     if(!by[k])by[k]={name:d.athleteName,entries:[]};
     by[k].entries.push(d);
   });
-  var sorted=Object.values(by).sort(function(a,b){return a.name.localeCompare(b.name);});
-  var grid=document.getElementById('athlete-grid');grid.innerHTML='';
-  sorted.forEach(function(ath,i){
-    var c=document.createElement('div');c.className='ath-card';c.style.animationDelay=(i*30)+'ms';
+  return Object.values(by).sort(function(a,b){return a.name.localeCompare(b.name);});
+}
+
+function renderAthletes(){
+  var athletes=buildAthleteMap();
+  var list=document.getElementById('athlete-list');list.innerHTML='';
+  athletes.forEach(function(ath,i){
     var gCount=ath.entries.filter(function(e){return e.medalClass==='gold';}).length;
     var sCount=ath.entries.filter(function(e){return e.medalClass==='silver';}).length;
     var bCount=ath.entries.filter(function(e){return e.medalClass==='bronze';}).length;
     var total=ath.entries.length;
-    var compsSorted=[...ath.entries].sort(function(a,b){return new Date(a.date)-new Date(b.date);});
-    var html='<div class="ath-name">'+ath.name+'</div>';
-    html+='<div class="ath-total">'+total+' medal'+(total!==1?'s':'')+' <span class="ath-breakdown">';
-    if(gCount)html+='🥇 '+gCount+' ';
-    if(sCount)html+='🥈 '+sCount+' ';
-    if(bCount)html+='🥉 '+bCount;
-    html+='</span></div><div class="ath-comps">';
-    compsSorted.forEach(function(e){
-      html+='<div class="comp-chip comp-chip-'+e.medalClass+'"><span class="chip-name">'+e.competition+'</span><span class="chip-medal">'+medal(e.medalClass)+' '+e.medal+'</span></div>';
-    });
-    html+='</div>';
-    c.innerHTML=html;
-    grid.appendChild(c);
+    var item=document.createElement('div');item.className='ath-list-item';item.style.animationDelay=(i*20)+'ms';
+    var summary='';
+    if(gCount)summary+='🥇 '+gCount+' ';
+    if(sCount)summary+='🥈 '+sCount+' ';
+    if(bCount)summary+='🥉 '+bCount;
+    item.innerHTML='<div class="ath-list-name">'+ath.name+'</div><div class="ath-list-count">'+total+' medal'+(total!==1?'s':'')+' &mdash; '+summary.trim()+'</div>';
+    item.onclick=function(){showAthleteProfile(ath.name);};
+    list.appendChild(item);
   });
+}
+
+function showAthleteProfile(name){
+  var athletes=buildAthleteMap();
+  var ath=athletes.find(function(a){return a.name===name;});
+  if(!ath)return;
+  var gCount=ath.entries.filter(function(e){return e.medalClass==='gold';}).length;
+  var sCount=ath.entries.filter(function(e){return e.medalClass==='silver';}).length;
+  var bCount=ath.entries.filter(function(e){return e.medalClass==='bronze';}).length;
+  var total=ath.entries.length;
+  var compsSorted=[...ath.entries].sort(function(a,b){return new Date(a.date)-new Date(b.date);});
+  var summary='';
+  if(gCount)summary+='🥇 '+gCount+' ';
+  if(sCount)summary+='🥈 '+sCount+' ';
+  if(bCount)summary+='🥉 '+bCount;
+  var chips='';
+  compsSorted.forEach(function(e){
+    chips+='<div class="comp-chip comp-chip-'+e.medalClass+'"><span class="chip-name">'+e.competition+'</span><span class="chip-medal">'+medal(e.medalClass)+' '+e.medal+'</span></div>';
+  });
+  document.getElementById('profile-content').innerHTML=
+    '<div class="profile-name">'+ath.name+'</div>'
+    +'<div class="profile-total">'+total+' medal'+(total!==1?'s':'')+' &mdash; '+summary.trim()+'</div>'
+    +'<div class="profile-chips">'+chips+'</div>';
+  document.getElementById('athlete-view').style.display='none';
+  document.getElementById('athlete-profile').style.display='block';
+}
+
+function showAthleteList(){
+  document.getElementById('athlete-profile').style.display='none';
+  document.getElementById('athlete-view').style.display='block';
+  document.getElementById('view-label').textContent='ATHLETES';
 }
 
 function setMainView(mode){
@@ -169,11 +213,13 @@ function setMainView(mode){
   document.getElementById('view-label').textContent=labels[mode]||'';
   if(mode==='athletes'){
     document.getElementById('comp-view').style.display='none';
+    document.getElementById('athlete-profile').style.display='none';
     document.getElementById('athlete-view').style.display='block';
     renderAthletes();
   } else {
     document.getElementById('comp-view').style.display='block';
     document.getElementById('athlete-view').style.display='none';
+    document.getElementById('athlete-profile').style.display='none';
     renderComps(mode);
   }
 }
