@@ -141,7 +141,7 @@ function renderComps(medalFilter){
     });
   });
 }
-function buildAthleteMap(){
+function buildAthleteMap(){ var by={};
   DATA.forEach(function(d){
     var k=d.athleteName.toLowerCase();
     if(!by[k])by[k]={name:d.athleteName,entries:[]};
